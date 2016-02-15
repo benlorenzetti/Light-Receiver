@@ -1,0 +1,33 @@
+*** transimpedance.cir ***
+
+Vcc cc gnd DC 5
+
+Isigma in gnd AC 1 SIN (0 1m 10Meg)
+Csigma in gnd 960p
+
+R10 b10 cc 99
+R11 b10 gnd 67
+
+Rc out gnd 100
+Re1 e1 gnd 10
+Re2 e2 cc 10
+R0 cc b2 204
+R1 b2 b1 365
+R2 b1 mirror 230
+R3 e0 gnd 33.333
+
+Q1 out b10 in model2n3904
+Q2 out b2 e2 model2n3906
+Qm1 in mirror e1 model2n3904
+Qm2 mirror mirror e2 model2n3904
+
+.model model2n3904 npn (bf=100 vaf=200 cje=18p cjc=4p)
+.model model2n3906 pnp (bf=100 vaf=200 cje=25p cjc=6p)
+
+.control
+op
+ac dec 100 100k 1000Meg
+plot vdb(out)
+plot vp(out)
+wrdata spice-output vdb(out) vp(out)
+.end
