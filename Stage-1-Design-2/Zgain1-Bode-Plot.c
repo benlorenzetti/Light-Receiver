@@ -75,7 +75,7 @@ int main (int argc, char *argv[]) {
   rth= 1 / (2 * M_PI * f1 * Cjc);
   r4 = rth * Vcc / (Vcc - Ic*Re - 2*Vbe -Vmargin);
   r3 = rth * Vcc / (Ic*Re + 2*Vbe + Vmargin);
-  r2 = (10/Ic) * (Vbe + Re*(Ic+Il+ (Vcc-Vbe+Vmargin)/(2*Rc)));
+  r2 = (10/Ic) * (Vbe + Re*(Ic+Il+ (Vcc+Vbe+Vmargin)/(2*Rc)));
   r1 = 10*Re;
   r0 = (10*(Vcc-Vbe)/Ic) - r1 - r2;
   omega1 = 1 / (rth * Cjc);
@@ -89,6 +89,7 @@ int main (int argc, char *argv[]) {
   printf ("R3 %f\n", r3);
   printf ("R4 %f\n", r4); 
   printf ("Rth = %f Ohms\n", rth);
+  printf ("Vout= %f V\n", 0.5 * (Vcc + Vbe + Vmargin));
   printf (" f1 = %f MHz\n", (omega1 / (2*MEGA*M_PI)));
   printf (" f2 = %f MHz\n", (omega2 / (2*MEGA*M_PI)));
   printf ("  A = %f (dimensionless)\n", A);

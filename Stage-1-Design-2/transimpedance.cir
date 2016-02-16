@@ -8,9 +8,9 @@ Csigma in gnd 960p
 Re1 me1 gnd 10
 Re2 me2 cc 10
 Rc out cc 250
-R0 b2 mirror 1929
+R0 b2 mirror 1906
 R1 e0 gnd 100
-R2 b2 cc 722
+R2 b2 cc 745
 R3 cc b1 92.5
 R4 b1 gnd 69.8
 

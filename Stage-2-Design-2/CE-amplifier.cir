@@ -1,0 +1,4 @@
+*** CE-Amplifier.cir ***
+*
+Vcc cc gnd DC 5
+Vin in gnd DC 3.075 AC 1  
