@@ -13,7 +13,7 @@
 #define MILLI 0.001
 #define PICO 0.000000000001
 
-const double Rc = 100;
+const double Rc = 250;
 const double f1 = 1000 * MEGA;
 const double f2 = 100 * MEGA;
 const double Il = 0;
@@ -25,6 +25,7 @@ const double Vcc = 5;
 const double BetaAve = 100;
 const double Vbe = 0.85;
 const double Re = 10;
+const double Vmargin = 0.3;
 
 int main (int argc, char *argv[]) {
 
@@ -69,21 +70,28 @@ int main (int argc, char *argv[]) {
     freq[i] = fscale * freq[i-1];
 
   // Evaluate DC Values
-  double Ic, rth, r0, r1, r2, r3, r4, omega1, omega2;
+  double Ic, rth, r0, r1, r2, r3, r4, omega1, omega2, A;
   Ic = 2 * M_PI * f2 * Csigma * Vt;
   rth= 1 / (2 * M_PI * f1 * Cjc);
-  r4 = rth * Vcc / (Vcc - Vth);
+  r4 = rth * Vcc / (Vcc - Ic*Re - 2*Vbe -Vmargin);
+  r3 = rth * Vcc / (Ic*Re + 2*Vbe + Vmargin);
+  r2 = (10/Ic) * (Vbe + Re*(Ic+Il+ (Vcc-Vbe+Vmargin)/(2*Rc)));
+  r1 = 10*Re;
+  r0 = (10*(Vcc-Vbe)/Ic) - r1 - r2;
   omega1 = 1 / (rth * Cjc);
-  omega2 = Ic / (Cjc * Vt);
-  printf (" Re = %f Ohms\n", Re);
-  printf (" R0 = %f Ohms\n", r0);
-  printf (" R1 = %f Ohms\n", r1);
-  printf (" R2 = %f Ohms\n", r2);
-  printf (" R3 = %f Ohms\n", r3);
+  omega2 = Ic / (Csigma * Vt);
+  A = 1 + Re*Ic / Vt;
+  printf ("Re %f\n", Re);
+  printf ("Rc %f\n", Rc);
+  printf ("R0 %f\n", r0);
+  printf ("R1 %f\n", r1);
+  printf ("R2 %f\n", r2);
+  printf ("R3 %f\n", r3);
+  printf ("R4 %f\n", r4); 
   printf ("Rth = %f Ohms\n", rth);
   printf (" f1 = %f MHz\n", (omega1 / (2*MEGA*M_PI)));
   printf (" f2 = %f MHz\n", (omega2 / (2*MEGA*M_PI)));
-
+  printf ("  A = %f (dimensionless)\n", A);
 
   // Evaluate the Transfer Function
   for (int i=0; i<Npoints; i++) {
@@ -93,12 +101,12 @@ int main (int argc, char *argv[]) {
     theta1 = (-1) * (M_PI_4 + atan (omega / omega1));
     relmag1 = gsl_hypot (1, (omega1 / omega));
     relmag2 = gsl_hypot (1, (omega / omega1));	
-    vec1 = gsl_complex_rect (1/relmag2, (omega2*Rc*Cjc)/relmag1);
+    vec1 = gsl_complex_rect (1/relmag2, A/relmag1);
     vec2 = gsl_complex_polar (omega/omega2, theta1);
     vec3 = gsl_complex_mul (vec1, vec2);
     vec4 = gsl_complex_rect (1, 0);
     vec5 = gsl_complex_add (vec4, vec3);
-    vec6 = gsl_complex_mul_real (vec5, (-Csigma/(Rc*Cjc)));
+    vec6 = gsl_complex_mul_real (vec5, (1/Rc));
     gain[i] = gsl_complex_inverse (vec6); 
   }
   // Print the Results to output.txt

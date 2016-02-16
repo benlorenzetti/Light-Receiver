@@ -5,21 +5,19 @@ Vcc cc gnd DC 5
 Isigma in gnd AC 1 SIN (0 1m 10Meg)
 Csigma in gnd 960p
 
-R10 b10 cc 99
-R11 b10 gnd 67
+Re1 me1 gnd 10
+Re2 me2 cc 10
+Rc out cc 250
+R0 b2 mirror 1929
+R1 e0 gnd 100
+R2 b2 cc 722
+R3 cc b1 92.5
+R4 b1 gnd 69.8
 
-Rc out gnd 100
-Re1 e1 gnd 10
-Re2 e2 cc 10
-R0 cc b2 204
-R1 b2 b1 365
-R2 b1 mirror 230
-R3 e0 gnd 33.333
-
-Q1 out b10 in model2n3904
+Q0 mirror mirror e0 model2n3904
+Q1 out b1 in model2n3904
+Qm1 in mirror me1 model2n3904
 Q2 out b2 e2 model2n3906
-Qm1 in mirror e1 model2n3904
-Qm2 mirror mirror e2 model2n3904
 
 .model model2n3904 npn (bf=100 vaf=200 cje=18p cjc=4p)
 .model model2n3906 pnp (bf=100 vaf=200 cje=25p cjc=6p)
