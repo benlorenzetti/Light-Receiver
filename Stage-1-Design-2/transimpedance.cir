@@ -2,7 +2,7 @@
 
 Vcc cc gnd DC 5
 
-Isigma in gnd AC 1 SIN (0 1m 10Meg)
+Isigma in gnd DC 1u AC 1 SIN (0 200n 10Meg)
 Csigma in gnd 960p
 
 Re1 me1 gnd 10
