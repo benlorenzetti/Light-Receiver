@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage[colorlinks=false]{hyperref}
+
+\begin{document}
+
+\title{Hacking 10BASE--T Ethernet\\for Underwater Optical Communication}
+\author{UC the Fish}
+
+\maketitle
+
+\section{Introduction}
+
+Ethernet is the most widely used local area network protocol for transmitting
+information between PCs, servers, telephones, sensors, PLCs, and many other machines.
+It defines physical form for communication signals,
+topology and materials used to connect devices,
+and how addressing and routing is done on such a network topology.
+10BASE--T Ethernet uses a differential electric signal, on a twisted pair
+of copper wires, with data clustered in ``frames'' that contain unique
+addresses.
+
+To expand on the above sentance:
+\begin{enumerate}
+\item The electric signal is differential to
+	\begin{enumerate}
+		\item Reduce common--mode noise
+		\item Provide transformer isolation between PCs with different earth potential
+		\item (HIGH and LOW logic levels are filtered out, so manchester encoding is used instead).
+	\end{enumerate}
+\item The electric signal operates at 10 MHz, with ???? voltage.
+\item The length of twister pair cable is limited by speed of light.
+	\begin{enumerate}
+		\item Time required for a signal to propagate (round trip) between two furthest stations is ``slot time''.
+		\item Maximum slot time is $51.2\,\mu s$.
+	\end{enumerate}
+\item Two fundamentally different network topologies are allowed.
+	\begin{enumerate}
+		\item Half--duplex mode (CSMA/CD) allows many stations to time share a single cable.
+		\item Full--duplex topology is only two stations are connected to a Tx--Rx cable,
+			but stations (routers) may have many connections to form star network topology.
+	\end{enumerate}
+\item Each station has a unique, 48 bit address for routing data ``packets''. Packets may be routed to
+	\begin{enumerate}
+		\item Individual MAC address
+		\item A multicast to a group of address determined by software higher up in the computer
+		\item Broadcast to all devices on the immediate topology cable.
+	\end{enumerate}
+\end{enumerate}
+
+
+
+
+\section{Getting IEEE Std 802.3}
+IEEE Std 802.3 is the standard for Ethernet, a collection of communication
+protocols for local area networks over a shared
+physical media or a star topology of many private, point--to--point connections.
+The 802.3 standard is freely available online but is so large it is split
+into multiple sections. The first section (only 555 pages!) is available
+at
+\url{https://standards.ieee.org/getieee802/download/802.3-2012\_section1.pdf}.
+
+
+
+\end{document}
