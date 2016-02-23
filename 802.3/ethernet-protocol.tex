@@ -11,6 +11,52 @@
 
 \section{Introduction}
 
+Ethernet was originally developed for connecting multiple computers together
+via a single, shared coaxial cable.
+Time sharing the medium is managed with Carrier Sense Multiple Access with
+Collision Detection (CSMA/CD). Each station monitors the cable
+and waits until the line is quiet to begin a transmission (CSMA).
+If two stations begin transmitting simultaneously, this is detected
+(CD) and both stations stop transmitting and wait a random time
+before retry.
+
+\begin{center}
+	\includegraphics[width=0.5\textwidth]{coax-topology.pdf}
+\end{center}
+
+Ethernet is an attractive protocol for underwater light communicion
+because only blue and green light can propagate reasonable distances
+in the ocean.
+This makes water very much like a single medium, or possibly a
+two channel medium, which all stations must share.
+
+Furthermore ethernet handles noise and interuption gracefully,
+with cyclic reduncancy checking built into the data packets
+and retransmission attempts baked into hardware state machines.
+The ocean is not a controlled environment, and other protocols
+such as USB need to renegotiate the entire link if communication
+from the master station is disrupted or altered.
+
+UC the Fish plans to ``hack'' ethernet, in the positive sense where hack
+means to repurpose for a new, exciting, but unexpected use.
+With any communication protocol, the standard should be followed as closely
+as possible so machines built by independent companies can coexist.
+The ethernet standard has many substandards for different media,
+including coax cable, twisted pair cable, and fiber optics.
+None of the defined media have propagation properties similar to open water,
+so for now a non--standard ``hack'' is needed.
+But who knows, perhaps one day light+water will be a part of the standard.
+
+\section{Getting IEEE Std 802.3}
+IEEE Std 802.3 is the standard for Ethernet communication.
+It is freely available online but is so large it is split
+into multiple sections.
+The first section (only 555 pages!) is available at
+\url{https://standards.ieee.org/getieee802/download/802.3-2012\_section1.pdf}.
+
+
+\section{10BASE--T Ethernet}
+
 Ethernet is the most widely used local area network protocol for transmitting
 information between PCs, servers, telephones, sensors, PLCs, and many other machines.
 It defines physical form for communication signals,
@@ -48,17 +94,6 @@ To expand on the above sentance:
 	\end{enumerate}
 \end{enumerate}
 
-
-
-
-\section{Getting IEEE Std 802.3}
-IEEE Std 802.3 is the standard for Ethernet, a collection of communication
-protocols for local area networks over a shared
-physical media or a star topology of many private, point--to--point connections.
-The 802.3 standard is freely available online but is so large it is split
-into multiple sections. The first section (only 555 pages!) is available
-at
-\url{https://standards.ieee.org/getieee802/download/802.3-2012\_section1.pdf}.
 
 
 
