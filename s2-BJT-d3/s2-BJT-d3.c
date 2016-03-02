@@ -16,7 +16,6 @@
 #define NANO 0.000000001
 #define PICO 0.000000000001
 
-const double Rc1 = 250;
 const double Ic1 = 16.6 * MILLI;
 const double Re1 = 10;
 const double Vc1= 3.075;
@@ -34,18 +33,19 @@ const double Vmargin = 0.3;
 
 int main (int argc, char *argv[]) {
 
-  // Get the Frequency Range from the User
-  double f3, f4, f5, f6;
-  if (argc != 5) {
-    printf ("  Usage: %s f3 f4 f5 f6\n", argv[0]);
-    printf ("Example: %s 1000000000 100 1000 1000000000\n", argv[0]);
+  // Get Rc1 and the Pole locations from the User
+  double Rc1, f3, f4, f5, f6;
+  if (argc != 6) {
+    printf ("  Usage: %s Rc f3 f4 f5 f6\n", argv[0]);
+    printf ("Example: %s 250 1000000000 100 1000 1000000000\n", argv[0]);
     exit (EXIT_FAILURE);
   }
 
-  f3 = atof (argv[1]);
-  f4 = atof (argv[2]);
-  f5 = atof (argv[3]);
-  f6 = atof (argv[4]);
+  Rc1 = atof (argv[1]);
+  f3 = atof (argv[2]);
+  f4 = atof (argv[3]);
+  f5 = atof (argv[4]);
+  f6 = atof (argv[5]);
   
   // Evaluate DC Values
   double omega3, omega4, omega5, omega6, Ic3, Re3, Rc4, R5, R7, R8, Ce3, C5, L6, Vmirror;
