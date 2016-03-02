@@ -1,0 +1,23 @@
+*** s1_BJT_d3.cir ***
+Vcc cc gnd DC 5
+
+Isignal in gnd AC 1 SIN (0 1n 10Meg)
+Iambient in gnd DC 1u
+Csigma in gnd 960.000000p
+
+R0 cc mirror 4109
+Re0 e0 gnd 154
+Re2 e2 gnd 15
+Rc1 cc out1 256
+R1 cc b1 3082
+R2 b1 gnd 2054
+C1 b1 gnd 0.619677p
+
+Q0 mirror mirror e0 model1
+Q1 out1 b1 in model1
+Q2 in mirror e2 model1
+.model model1 npn (bf=100 vaf=200 cje=18.000000p cjc=4.000000p)
+
+.control
+ac dec 100 100 1000000000
+wrdata spice_output vdb(out1) vp(out1)

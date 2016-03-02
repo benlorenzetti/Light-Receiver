@@ -1,0 +1,25 @@
+*** ./s2-BJT-d3 ***
+*f3=10000000000, f4=100, f5=1000, f6=100000
+Vcc cc gnd DC 5
+Vc1 indc gnd DC 2.5
+Vin in indc 1m AC 1 SIN (0 1 10Meg)
+Vmirror mirror gnd DC 1.016000
+Rc1 c1 in 81.000000
+L6 c1 n5 50n
+R5 n5 b3 8.333k
+C5 n5 b3 19n
+R7 cc b4 200
+R8 b4 gnd 300
+Rc4 cc out 250
+Re3 me3 gnd 41.7
+Ce3 e3 gnd 381u
+
+Q3 c3 b3 e3 2n3904
+Qm3 e3 mirror me3 2n3904
+Q4 out b4 c3 2n3904
+.model 2n3904 npn (bf=100.000000 vaf=200 cje=18p cjc=4p)
+.control
+ac dec 100 10 1000Meg
+plot vdb(out)
+plot vp(out)
+wrdata spice-output vdb(out) vp(out)
