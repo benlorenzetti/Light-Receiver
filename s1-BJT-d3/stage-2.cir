@@ -1,0 +1,30 @@
+*** Stage 2 ***
+
+Vcc cc 0 DC 5
+
+Vout1 out1 0 DC 2.5 AC 1 SIN (0 16.2u 10Meg)
+Rc1 out1 in2 81
+Vmirror mirror 0 DC 1
+
+L3 in2 n3 127n
+R5 n3 b3 80k
+C5 n3 b3 20n
+Re3 e4 0 416
+Ce3 e3 0 1u
+Rc3 cc out2 2500
+R5 cc b5 200
+R6 b5 0 300
+
+Q3 c3 b3 e3 m3904
+Q4 e3 mirror e4 m3904
+Q5 out2 b5 c3 m3904
+
+.model m3904 npn (bf=100 vaf=200 cje=18p cjc=4p)
+
+.control
+op
+ac dec 100 100 1000Meg
+plot vdb(out2)
+*plot vp(out2)
+.end
+

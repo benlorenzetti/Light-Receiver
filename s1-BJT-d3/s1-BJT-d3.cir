@@ -1,0 +1,27 @@
+*** s1-BJT-d3.cir ***
+
+Vcc cc gnd DC 5
+
+Ilight in gnd DC 1u AC 1 SIN (0 200n 10Meg)
+Csigma in gnd 960p
+
+R0 cc mirror 1.3k
+Re0 e0 gnd 81
+Re1 e1 gnd 8.1
+R1 cc b1 1k
+R2 b1 gnd 666
+C1 b1 gnd 1uF
+Rc1 cc out1 81
+
+Q0 mirror mirror e0 m3904
+Q1 out1 b1 in m3904
+Q2 in mirror e1 m3904
+
+.model m3904 npn (bf=100 vaf=200 cje=18p cjc=4p)
+
+.control
+op
+ac dec 100 100 1000Meg
+plot vdb(out1)
+*plot vp(out1)
+*wrdata spice_output vdb(out1) vp(out1) 
