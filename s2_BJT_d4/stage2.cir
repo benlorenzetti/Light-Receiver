@@ -1,0 +1,31 @@
+*** stage2.cir ***
+
+Vcc cc gnd DC 5
+
+Vmirror mirror gnd DC 1
+Vin out1 gnd 1m AC 1 SIN (0 1 10Meg)
+Rc1 out1 in2 200
+
+R5 cc b7 2.19k
+Re5 e5 gnd 182
+Re6 e6 gnd 20
+R7 cc b8 33.3
+R8 b8 gnd 50
+Ce7 e7 gnd 79.5u
+C5 n5 b7 398n
+L5 in2 n5 0.1u
+
+Q5 b7 mirror e5 n3904
+Q6 e7 mirror e6 n3904
+Q7 c7 b7 e7 n3904
+Q8 c8 b8 c7 n3904
+
+Rdif cc c8 100
+
+.model n3904 npn (bf=100 vaf=200 cje=8p cjc=4p)
+
+.control
+ac dec 100 1 100G
+plot vdb(c8)
+plot vp(c8)
+wrdata output2 vdb(c8) vp(c8)
