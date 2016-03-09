@@ -4,20 +4,20 @@ Vcc cc gnd DC 5
 
 Iamb in gnd DC 1u
 Iin in gnd 1m AC 1 SIN (0 1 10Meg)
-Csigma in gnd 64p
+Csigma in gnd 15p
 
-R0 cc mirror 9.95k
-R1 cc b2 420
-R2 b2 gnd 8k
-R3 e3 gnd 62.19
-R4 e4 gnd 621.9
+R0 cc mirror 1.7k
+R1 cc b2 723
+R2 b2 gnd 884
+R3 e3 gnd 10.6
+R4 e4 gnd 106
 
-Rc1 cc out1 200
+Rc1 cc out1 100
 
 Q1 out1 b1 in n2369
-Q2 cc b2 b1 n2369
-Q3 in mirror e3 n2369
-Q4 mirror mirror e4 n2369
+Q2 cc b2 b1 n3904
+Q3 in mirror e3 n3904
+Q4 mirror mirror e4 n3904
 
 .model n3904 npn (bf=100 vaf=200 cje=8p cjc=4p)
 .model n2369 npn (bf=100 vaf=200 cje=5p cjc=4p)
@@ -26,4 +26,4 @@ Q4 mirror mirror e4 n2369
 ac dec 100 1 100G
 plot vdb(out1)
 plot vp(out1)
-wrdata output1 vdb(out1) vp(out1)
+wrdata spice1 vdb(out1) vp(out1)

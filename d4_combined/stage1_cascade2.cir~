@@ -1,0 +1,69 @@
+*** stage1_cascade2.cir ***
+
+Vcc cc gnd DC 5
+
+************************** Stage I *****************************
+Iamb in gnd DC 1u
+Vammeter ammeter gnd DC 0
+Iin in ammeter 1m AC 1 PULSE (-5nA 5nA 0 1ns 1ns 50ns 100ns)
+Csigma in gnd 15p
+
+R0 cc mirror 1.7k
+R1 cc b2 723
+R2 b2 gnd 884
+R3 e3 gnd 10.6
+R4 e4 gnd 106
+
+Rc1 cc out1 100
+
+Q1 out1 b1 in n2369
+Q2 cc b2 b1 n3904
+Q3 in mirror e3 n3904
+Q4 mirror mirror e4 n3904
+
+************************** Stage II *****************************
+R5 cc b7 2.74k
+R7 cc b8 667
+R8 b8 gnd 2000
+Re5 e5 gnd 342
+Re6 e6 gnd 25
+Ce7 e7 gnd 100u
+C5 n5 b7 100n
+L5 out1 n5 100n
+
+Q5 b7 mirror e5 n3904
+Q6 e7 mirror e6 n3904
+Q7 c7 b7 e7 n2369
+Q8 cc b8 b9 n3904
+Q9 c9 b9 c7 n2369
+
+*** Capacitative Coupling to Stage III ***
+Rdif cc c9 100
+Cload c9 out2p 1u
+Rload out2p gnd 100k
+*** Transformer Coupling to Stage III ****
+*X1 cc c9 out2p gnd murata76615
+*Rdif out2p gnd 100
+
+************************ Models ******************************
+.subckt murata76615 1 2 3 4
+Lleakp 1 11 2u
+Rp 11 111 1.00
+Lp 111 2 3200u
+Lleaks 3 33 2u
+Rs 33 333 1.00
+Ls 333 4 3200u
+K Lp Ls 1
+.ends murata76615
+
+.model n3904 npn (bf=100 vaf=200 cje=8p cjc=4p)
+.model n2369 npn (bf=100 vaf=200 cje=5p cjc=4p)
+
+.control
+ac dec 100 1 100G
+plot vdb(out1) vdb(c9)
+plot vp(out1) vp(c9)
+wrdata spice1_cascade2 vdb(c9) vp(c9)
+tran 0.1ns 1000ns
+plot v(out2p)
+plot i(Vammeter)
