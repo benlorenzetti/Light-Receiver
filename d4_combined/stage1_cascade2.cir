@@ -56,8 +56,8 @@ Ls 333 4 3200u
 K Lp Ls 1
 .ends murata76615
 
-.model n3904 npn (bf=100 vaf=200 cje=8p cjc=4p)
-.model n2369 npn (bf=100 vaf=200 cje=5p cjc=4p)
+.model n3904 npn (IS=1E-14 VAF=100 Bf=300 IKF=0.4 XTB=1.5 BR=4 CJC=4E-12 CJE=8E-12 RB=20 RC=0.1 RE=0.1 TR=250E-9 TF=350E-12 ITF=1 VTF=2 XTF=3 Vceo=40 Icrating=200m)
+.model n2369 npn (Is=44.14f Xti=3 Eg=1.11 Vaf=100 Bf=78.32 Ne=1.389 Ise=91.95f Ikf=.3498 Xtb=1.5 Br=12.69m Nc=2 Isc=0 Ikr=0 Rc=.6 Cjc=2.83p Mjc=86.19m Vjc=.75 Fc=.5 Cje=4.5p Mje=.2418 Vje=.75 Tr=1.073u Tf=227.6p Itf=.3 Vtf=4 Xtf=4 Rb=10 Vceo=15 Icrating=200m)
 
 .control
 ac dec 100 1 100G

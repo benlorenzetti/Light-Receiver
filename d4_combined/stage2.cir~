@@ -25,7 +25,7 @@ Q9 c9 b9 c7 n2369
 
 *** Capacitative Coupling to Stage III ***
 Rdif cc c9 100
-Cload c9 out2p 1u
+Cload c9 out2p 10u
 Rload out2p gnd 100k
 *** Transformer Coupling to Stage III ****
 *X1 cc c9 out2p gnd murata76615
