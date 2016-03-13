@@ -1,0 +1,23 @@
+Good notes at http://hacked10bits.blogspot.com/2011/12/sending-raw-ethernet-frames-in-6-easy.html
+
+And also aschauf.landshut.org/fh/linux/udp_vs_raw/ch01s03.html
+
+To build an Ethernet frame, need:
+1. destination MAC address (6 bytes) - use the broadcast address FF:FF:FF:FF:FF:FF
+2. Source MAC address
+3. Human readable name of the ethernet interface
+4. Ethernet protocol number (or 802.3 length field)
+5. Data - ethernet frame length must be 64 <= length <=1518 bytes,
+not including the preamble or synch (or SFD) fields which are prepended
+in hardware. Data length may be 46-1500 bytes.
+
+To display network interfaces:
+$ ifconfig | more
+
+Looking for the human readable name of the ethernet interface.
+In my case it was "eth0".
+
+Have to specify the entire frame, except for preamble and CRC which is handled by the hardware.
+Needs to be a contiguous array (use union/struct to help).
+
+
