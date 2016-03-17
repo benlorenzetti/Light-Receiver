@@ -1,4 +1,4 @@
-/* broadcast_packet.c
+/* ethernet_listen.c
  *
  * Builds an 802.3 ethernet frame and then uses Linux sockets to broadcast
  * this packet to all devices on the network. The user passes the data to be
@@ -48,41 +48,33 @@ union eth_frame
  * after a full data array for human readability.
  */
 
-const char BROADCAST_ADDRESS[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-          
+const unsigned char BROADCAST_ADDRESS[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+unsigned char host_address[ETH_ALEN]; /* ETH_ALEN is 6 */
+char interface_name[1000];
+int interface_index;
+union eth_frame frame1;
+int frame_length;
+int data_length;
+         
 int main (int argc, char *argv[])
 {
-  char interface_name[1000];
-  int interface_index;
-  union eth_frame frame1;
-  int data_length;
   memset (&frame1, 0, sizeof (frame1));
 
-  /* Get Ethernet Interface Name and Data to Broadcast from User */
-  if (argc != 3)
+  /* Get Ethernet Interface Name from User */
+  if (argc != 2)
   {
-    printf ("Usage: %s <ethernet interface> <data>\n", argv[0]);
+    printf ("Usage: %s <ethernet interface>\n", argv[0]);
     printf ("  where <ethernet interface> is the human readable name of the");
     printf (" sytems' ethernet.\n");
     printf ("  Get the name with command \"$ ifconfig | more\".\n");
-    printf ("  <data> is a character array to be broadcast.\n");
     printf ("  Example:\n");
-    printf ("  $ %s eth0 \"Hello World!\"\n", argv[0]);
+    printf ("  $ %s eth0\n", argv[0]);
     exit (EXIT_FAILURE);
   }
-  else
-  {
-    /* Copy the <ethernet interface> name provided by User */
-    strcpy (interface_name, argv[1]);
-    /* Copy the <data> provided by user into the Ethernet Frame */
-    strcpy (frame1.field.data, argv[2]);
-    data_length = strlen (argv[2]);
-    frame1.field.length[0] = data_length / 256; /* in Network Byte Order */
-    frame1.field.length[1] = data_length % 256;
-  }
 
-  /* Set Destination Address to Broadcast */
-  memcpy (frame1.field.dest_addr, BROADCAST_ADDRESS, 6); 
+  /* Copy the <ethernet interface> name provided by User */
+  strcpy (interface_name, argv[1]);
 
   /* Open an Ethernet Socket */
   int sfd;
@@ -108,40 +100,33 @@ int main (int argc, char *argv[])
 */
 
   /* Look Up the Source MAC Address */
-  unsigned char mac[ETH_ALEN];
   if (ioctl (sfd, SIOCGIFHWADDR, &interface_req) < 0)
   {
     fprintf (stderr, "ioctl (SIOCGIFHWADDR) error.\n");
     exit (EXIT_FAILURE);
   }
-  memcpy ( (void*)mac, (void*)(interface_req.ifr_hwaddr.sa_data), ETH_ALEN);
+  memcpy ( (void*)host_address, (void*)(interface_req.ifr_hwaddr.sa_data), ETH_ALEN);
 /*printf ("Source MAC Address %d:%d:", (int) mac[0], (int) mac[1]);
   printf ("%d:%d:%d:%d\n", (int)mac[2], (int)mac[3], (int)mac[4], (int)mac[5]);
 */
 
-  /* Set the Source Address */
-  memcpy (frame1.field.src_addr, mac, 6);
-
-  /* Prepare sockaddr_ll Structure for sendto() */
-  struct sockaddr_ll saddr;
-  saddr.sll_family = PF_PACKET; /* repitition that this is a packet socket */
-  saddr.sll_ifindex = interface_index;
-  saddr.sll_halen = ETH_ALEN; /* confirms that ethernet address are 6 bytes */
-  memcpy ( (void*)(saddr.sll_addr) , (void*)BROADCAST_ADDRESS, ETH_ALEN);
-  
-  /* Send Packet */
-  int sent, f_len;
-  f_len = data_length + ETH_HLEN;
-  sent = sendto (sfd, frame1.buffer, f_len, 0, (struct sockaddr*)&saddr, sizeof(saddr));
-  if (sent <= 0)
+  int count = 0;
+  while (1)
   {
-    fprintf (stderr, "sendto() fails %d\n", sent);
-    exit (EXIT_FAILURE);
-  }
-  if (sent != f_len)
-  {
-    fprintf (stderr, "incomplete transmission; %d of %d bytes\n", sent, f_len);
-    exit (EXIT_FAILURE);
+    int received = 0;
+    received = recvfrom (sfd, (void*)&frame1, ETH_FRAME_LEN, 0, NULL, NULL);
+    if (received < 0)
+    {
+      fprintf (stderr, "recvfrom() error %d\n", received);
+      exit (EXIT_FAILURE);
+    }
+    else if (received == 0)
+      continue;
+    else
+    {
+      count++;
+      printf ("packet received (%d)\n", count);
+    }
   }
 
   /* Close the Socket */
