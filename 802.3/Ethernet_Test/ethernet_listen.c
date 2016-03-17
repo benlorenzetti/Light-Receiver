@@ -3,13 +3,7 @@
  * Builds an 802.3 ethernet frame and then uses Linux sockets to broadcast
  * this packet to all devices on the network. The user passes the data to be
  * sent and the name of the ethernet interface which should be used.
- * 
- * Use a packet analyzer like Wireshark to confirm packets are leaving the OS.
  *
- * Code adapted from two webpages:
- * hacked10bits.blogspot.com/2011/12/sending-raw-ethernet-frames-in-6-easy.html
- * aschauf.landshut.org/fh/linux/udp_vs_raw/
- * and from Encyclopedia of Telecommunications Volume 9 by Froelich and Kent.
  */
 
 #include <stdio.h>
@@ -47,6 +41,8 @@ union eth_frame
  * however long the data may be. In the struct above, it is only located
  * after a full data array for human readability.
  */
+
+char* printsafe_cpy (char*, const union eth_frame*, int);
 
 const unsigned char BROADCAST_ADDRESS[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
@@ -120,18 +116,41 @@ int main (int argc, char *argv[])
       fprintf (stderr, "recvfrom() error %d\n", received);
       exit (EXIT_FAILURE);
     }
-    else if (received == 0)
+    if (received == 0)
       continue;
-    else
-    {
-      count++;
-      printf ("packet received (%d)\n", count);
-    }
+    /* If received > 0, then print out the first X chars of data */
+    char temp[1500];
+    printf ("Packet (%d): %s\n", count++, printsafe_cpy (temp, &frame1, 70));
   }
 
   /* Close the Socket */
   close (sfd);
 
   return EXIT_SUCCESS;
+}
+
+char* printsafe_cpy (char *dest, const union eth_frame *frame, int max_length)
+{
+  /* Determine Data Length to Print */
+  int length;
+  length = 256 * frame->field.length[0] + frame->field.length[1];
+  length = (length < 1500) ? length: 1500; /* Max 802.3 data length */
+  length = (length < max_length) ? length: max_length;
+  /* Convert all special characters to spaces */
+  int i;
+  const unsigned char *data;
+  data = frame->field.data;
+  for (i=0; i<length; i++)
+  {
+    if (0 <= data[i] && data[i] <= 32)
+      dest[i] = ' ';
+    else if (33 <= data[i] && data[i] <=126)
+      dest[i] = data[i];
+    else
+      dest[i] = ' ';
+  }
+  /* Null Terminate and Return ptr for fPrinting */
+  dest[length] = 0;
+  return dest;
 }
 
