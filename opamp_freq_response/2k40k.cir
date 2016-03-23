@@ -1,0 +1,27 @@
+*** 2k40k.cir ***
+
+Vcc cc 0 DC 5
+Vref 4 0 DC 2.5
+
+* PULSE (Vinitial, Vpulse, delay time, rise time, fall time, pulse width, period)
+Vin in 0 DC 0 AC 1 PULSE (0mV 1uV 0s 1ns 1ns 50us 100us)
+Rin 1 in 100
+
+C1 1 2 330n
+R1 2 3 1000
+R2 3 6 10000
+C3 6 7 330n
+R3 7 0 1000
+
+.include ./lm7171.cir
+X1 4 3 cc 0 6 LM7171A
+
+.control
+ac dec 100 1 100G
+plot vdb(6)
+plot vp(6)
+wrdata 2k40k vdb(6) vp(6)
+*tran 1us 1000us
+*plot v(1) v(6)
+
+
