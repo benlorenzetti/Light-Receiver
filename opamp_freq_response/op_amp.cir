@@ -1,0 +1,24 @@
+*** op_amp.cir ***
+
+Vcc cc 0 DC 5
+Vref 4 0 DC 2.5
+Vin in 0 DC 0 AC 1 PULSE (0mV 1uV 0s 1ns 1n2 50us 100us)
+Rin 1 in 100
+
+C1 1 2 330.000000n
+R1 2 3 2.000000k
+R2 3 6 20.000000k
+C2 3 6 20.000000p
+R3 7 0 2.000000k
+C3 6 7 330.000000n
+
+.include ./lm7171.cir
+X1 4 3 cc 0 6 LM7171A
+
+.control
+ac dec 100 1 100G
+*plot vdb(6)
+*plot vp(6)
+wrdata spice vdb(6) vp(6)
+*tran 1us 1000us
+*plot v(1) v(6)

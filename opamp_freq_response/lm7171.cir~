@@ -114,10 +114,9 @@ VFX2 10 92 DC 0
 FPX 4 10 VFX1 1.0
 FNX 10 5 VFX2 1.0
 *RAX 122 10 MRAX 1.001880e+03
-RAX 122 10 1.001880e+03 MRAX ; had to change <value> <mname> for ngspice
+RAX 122 10 1.001880e3 MRAX ; had to change <value> <mname> for ngspice
 * Input Offset Voltage
-* .MODEL MRAX RES TC1=-7e-05
-.MODEL MRAX R TC1=-7e-05 ; had to change RES to R for NGSPICE
+.MODEL MRAX R TC1=-7e-05
 FIN1 18 5 VTEMP 0.983333
 FIN2 19 5 VTEMP 1.01667
 * Input Bias Currents
