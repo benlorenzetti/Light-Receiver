@@ -17,11 +17,10 @@
 #define NANO  0.000000001
 #define PICO  0.000000000001
 
-const double C0 = 20 * PICO;
 const double R0 = 20;
 const double GB = 125 * MEGA;
 
-double R1, R2, R3, C1, C2, C3;
+double C0, R1, R2, R3, C1, C2, C3;
 double w1, w2, w3;
 double w, f, mag, dB, phase;
 gsl_complex Z1, Z2, Z3, Av, x1, x2, x3, x4, temp;
@@ -29,17 +28,18 @@ gsl_complex Z1, Z2, Z3, Av, x1, x2, x3, x4, temp;
 int main (int argc, char *argv[])
 {
   /* Get Component Values from User */
-  if (argc != 7)
+  if (argc != 8)
   {
-    printf ("Usage: %s R1(k) R2(k) R3(k) C1(nF) C2(pf) C3(nF)\n", argv[0]);
+    printf ("Usage: %s C0(pF) R1(k) R2(k) R3(k) C1(nF) C2(pf) C3(nF)\n", argv[0]);
     exit (EXIT_FAILURE);
   } else {
-    R1 = KILO * atof (argv[1]);
-    R2 = KILO * atof (argv[2]);
-    R3 = KILO * atof (argv[3]);
-    C1 = NANO * atof (argv[4]);
-    C2 = PICO * atof (argv[5]);
-    C3 = NANO * atof (argv[6]);
+    C0 = PICO * atof (argv[1]);
+    R1 = KILO * atof (argv[2]);
+    R2 = KILO * atof (argv[3]);
+    R3 = KILO * atof (argv[4]);
+    C1 = NANO * atof (argv[5]);
+    C2 = PICO * atof (argv[6]);
+    C3 = NANO * atof (argv[7]);
   }
 
   /* Calculate Poles/Zeros */
@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
   }
 
   /* Calculate Theoretical Data */
-  f = 1;
+  f = 10;
   while (f < GIGA)
   {
     w = 2 * M_PI * f;
@@ -74,10 +74,10 @@ int main (int argc, char *argv[])
     x1 = gsl_complex_div (x1, temp);
 
     x2 = gsl_complex_mul_real (x1, w*C0);
-    temp = gsl_complex_rect (0, -1);
-    x2 = gsl_complex_mul (x1, temp);
+    temp = gsl_complex_rect (0, 1);
+    x2 = gsl_complex_mul (x2, temp);
     temp = gsl_complex_rect (1, 0);
-    x2 = gsl_complex_add (x1, temp);
+    x2 = gsl_complex_add (x2, temp);
 
     x3 = gsl_complex_rect (0, -R0*f/GB);
     x3 = gsl_complex_div (x3, Z2);
@@ -129,6 +129,7 @@ int main (int argc, char *argv[])
   fprintf (fp, "Vref 4 0 DC 2.5\n");
   fprintf (fp, "Vin in 0 DC 0 AC 1 PULSE (0mV 1uV 0s 1ns 1n2 50us 100us)\n");
   fprintf (fp, "Rin 1 in 100\n\n");
+  fprintf (fp, "C0 3 4 %fp\n", C0/PICO);
   fprintf (fp, "C1 1 2 %fn\n", C1/NANO);
   fprintf (fp, "R1 2 3 %fk\n", R1/KILO);
   fprintf (fp, "R2 3 6 %fk\n", R2/KILO);
@@ -138,7 +139,7 @@ int main (int argc, char *argv[])
   fprintf (fp, "\n.include ./lm7171.cir\n");
   fprintf (fp, "X1 4 3 cc 0 6 LM7171A\n");
   fprintf (fp, "\n.control\n");
-  fprintf (fp, "ac dec 100 1 100G\n");
+  fprintf (fp, "ac dec 10 100 1G\n");
   fprintf (fp, "*plot vdb(6)\n*plot vp(6)\n");
   fprintf (fp, "wrdata spice vdb(6) vp(6)\n");
   fprintf (fp, "*tran 1us 1000us\n*plot v(1) v(6)\n");
@@ -170,9 +171,11 @@ int main (int argc, char *argv[])
   gnuplot_cmd (mag_plot, "set title 'Op-Amp Stage'");
   gnuplot_cmd (phase_plot, "set title 'Op-Amp Stage'");
   gnuplot_cmd (mag_plot, "plot 'theory.data' using 1:2 title 'Theory' with lines, \\");
-  gnuplot_cmd (mag_plot, "'spice.data' using 1:2 title 'SPICE' with lines");
+  gnuplot_cmd (mag_plot, "'spice.data' using 1:2 title 'SPICE' with lines, \\");
+  gnuplot_cmd (mag_plot, "'experimental.data' using 1:2 title 'Experimental'");
   gnuplot_cmd (phase_plot, "plot 'theory.data' using 3:4 title 'Theory' with lines, \\");
-  gnuplot_cmd (phase_plot, "'spice.data' using 3:4 title 'SPICE' with lines");
+  gnuplot_cmd (phase_plot, "'spice.data' using 3:4 title 'SPICE' with lines, \\");
+  gnuplot_cmd (phase_plot, "'experimental.data' using 1:3 title 'Experimental'");
   printf ("Return to Exit -> ");
   int stay_open = getc (stdin);
   gnuplot_close (mag_plot);

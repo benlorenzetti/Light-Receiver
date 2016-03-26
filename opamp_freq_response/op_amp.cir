@@ -5,18 +5,19 @@ Vref 4 0 DC 2.5
 Vin in 0 DC 0 AC 1 PULSE (0mV 1uV 0s 1ns 1n2 50us 100us)
 Rin 1 in 100
 
+C0 3 4 100.000000p
 C1 1 2 330.000000n
-R1 2 3 2.000000k
-R2 3 6 20.000000k
-C2 3 6 20.000000p
-R3 7 0 2.000000k
+R1 2 3 1.000000k
+R2 3 6 10.000000k
+C2 3 6 100.000000p
+R3 7 0 1.000000k
 C3 6 7 330.000000n
 
 .include ./lm7171.cir
 X1 4 3 cc 0 6 LM7171A
 
 .control
-ac dec 100 1 100G
+ac dec 10 100 1G
 *plot vdb(6)
 *plot vp(6)
 wrdata spice vdb(6) vp(6)
