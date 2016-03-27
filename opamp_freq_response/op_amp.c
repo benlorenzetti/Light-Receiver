@@ -1,5 +1,14 @@
 /* op_amp.c
+ * 
+ * This script corresponds to the circuit and transfer function in
+ * "Opamp_High_Frequency_Design.pdf". It produces a plot of the Av
+ * gain equation for user inputted component values.
+ * A system call to NGSPICE is made for comparison of theory and
+ * simulation.
  *
+ * Dependencies: NGSPICE, gcc, GNU scientific library, GNU Plot,
+ *               GNU Plot C interface by N. Devillard, and an opamp
+ *               subcircuit model in file "lm7171.cir".
  */
 
 #include <stdio.h>
@@ -17,8 +26,8 @@
 #define NANO  0.000000001
 #define PICO  0.000000000001
 
-const double R0 = 20;
-const double GB = 125 * MEGA;
+const double R0 = 18;
+const double GB = 160 * MEGA;
 
 double C0, R1, R2, R3, C1, C2, C3;
 double w1, w2, w3;
@@ -125,11 +134,11 @@ int main (int argc, char *argv[])
   strcat (netlist_name, (2 + argv[0]));
   strcat (netlist_name, ".cir ***");
   fprintf (fp, "%s\n\n", netlist_name);
-  fprintf (fp, "Vcc cc 0 DC 5\n");
-  fprintf (fp, "Vref 4 0 DC 2.5\n");
+  fprintf (fp, "Vcc cc 0 DC 9\n");
+  fprintf (fp, "Vee ee 0 DC -9\n");
+  fprintf (fp, "Vref 4 0 DC 0\n");
   fprintf (fp, "Vin in 0 DC 0 AC 1 PULSE (0mV 1uV 0s 1ns 1n2 50us 100us)\n");
   fprintf (fp, "Rin 1 in 100\n\n");
-  fprintf (fp, "C0 3 4 %fp\n", C0/PICO);
   fprintf (fp, "C1 1 2 %fn\n", C1/NANO);
   fprintf (fp, "R1 2 3 %fk\n", R1/KILO);
   fprintf (fp, "R2 3 6 %fk\n", R2/KILO);
@@ -137,7 +146,7 @@ int main (int argc, char *argv[])
   fprintf (fp, "R3 7 0 %fk\n", R3/KILO);
   fprintf (fp, "C3 6 7 %fn\n", C3/NANO);
   fprintf (fp, "\n.include ./lm7171.cir\n");
-  fprintf (fp, "X1 4 3 cc 0 6 LM7171A\n");
+  fprintf (fp, "X1 4 3 cc ee 6 LM7171A\n");
   fprintf (fp, "\n.control\n");
   fprintf (fp, "ac dec 10 100 1G\n");
   fprintf (fp, "*plot vdb(6)\n*plot vp(6)\n");
@@ -165,11 +174,11 @@ int main (int argc, char *argv[])
   gnuplot_set_xlabel (mag_plot, "Frequency (Hz)");
   gnuplot_set_xlabel (phase_plot, "Frequency (Hz)");
   gnuplot_set_ylabel (mag_plot, "Magnitude Gain (dB)");
-  gnuplot_set_ylabel (phase_plot, "Phase Shift (Degrees)");
+  gnuplot_set_ylabel (phase_plot, "Phase Shift (radians)");
   gnuplot_cmd (mag_plot, "set logscale x");
   gnuplot_cmd (phase_plot, "set logscale x");
-  gnuplot_cmd (mag_plot, "set title 'Op-Amp Stage'");
-  gnuplot_cmd (phase_plot, "set title 'Op-Amp Stage'");
+  gnuplot_cmd (mag_plot, "set title 'op_amp.c'");
+  gnuplot_cmd (phase_plot, "set title 'op_amp.c'");
   gnuplot_cmd (mag_plot, "plot 'theory.data' using 1:2 title 'Theory' with lines, \\");
   gnuplot_cmd (mag_plot, "'spice.data' using 1:2 title 'SPICE' with lines, \\");
   gnuplot_cmd (mag_plot, "'experimental.data' using 1:2 title 'Experimental'");
